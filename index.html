@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELECTROMART - Katalog Elektronik Responsif</title>
+
+<!-- Bootstrap 5 CSS (CDN) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+<style>
+/* ============ CSS VARIABLES (tema hitam-biru) ============ */
+:root {
+  --bg: #0b0f14;
+  --surface: #121821;
+  --surface-2: #18202c;
+  --text: #dce6f2;
+  --muted: #8a99ad;
+  --blue: #1e6bd6;
+  --blue-lt: #3b82f6;
+  --border: #233043;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* Navbar */
+.navbar {
+  background: var(--surface) !important;
+  border-bottom: 1px solid var(--border);
+}
+.navbar-brand { color: var(--blue-lt) !important; font-weight: 700; }
+.navbar .nav-link { color: var(--muted) !important; transition: color .25s; }
+.navbar .nav-link:hover,
+.navbar .nav-link.active { color: var(--blue-lt) !important; }
+/* Ikon hamburger terlihat jelas di tema gelap */
+.navbar-toggler { border-color: var(--border); }
+.navbar-toggler:focus { box-shadow: 0 0 0 .2rem rgba(59,130,246,.25); }
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, var(--surface-2), var(--bg));
+  border-bottom: 1px solid var(--border);
+  padding: 3rem 0;
+}
+.hero h1 { color: #fff; font-weight: 700; letter-spacing: .05em; }
+.hero p  { color: var(--muted); }
+
+/* Card produk */
+.produk-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform .3s, box-shadow .3s, border-color .3s;
+  height: 100%;
+}
+.produk-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(30,107,214,.25);
+  border-color: var(--blue);
+}
+.produk-card img { width: 100%; height: 220px; object-fit: cover; }
+/* Gambar promosi (ada tulisan/spesifikasi) → tampil utuh tidak terpotong */
+.produk-card img.img-promo {
+  object-fit: contain;
+  background: #fff;
+  padding: .5rem;
+}
+.produk-card .card-body { padding: 1rem; }
+.produk-card h5 { color: #fff; font-size: 1rem; margin-bottom: .3rem; }
+.produk-card .kategori {
+  color: var(--blue-lt);
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 600;
+}
+.harga { color: var(--blue-lt); font-weight: 700; font-size: 1.15rem; }
+.harga small { color: var(--muted); text-decoration: line-through; font-size: .8rem; font-weight: 400; }
+
+/* Rating */
+.rating { color: #f5b301; font-size: .8rem; }
+.rating .jumlah { color: var(--muted); }
+
+/* Form & input */
+.form-control, .form-select {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+}
+.form-control::placeholder { color: var(--muted); }
+.form-control:focus, .form-select:focus {
+  background: var(--surface); border-color: var(--blue-lt); color: #fff;
+  box-shadow: 0 0 0 .2rem rgba(59,130,246,.15);
+}
+
+/* Tombol */
+.btn-biru {
+  background: var(--blue); color: #fff; border: none; border-radius: 8px;
+  padding: .5rem 1.2rem; font-weight: 600; transition: background .25s;
+}
+.btn-biru:hover { background: var(--blue-lt); color: #fff; }
+
+/* ===== Filter pills — RESPONSIF ===== */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1.5rem;
+}
+.filter-btn {
+  flex: 1 1 auto;
+  min-width: 140px;
+  text-align: center;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 99px;
+  padding: .5rem 1rem;
+  font-size: .85rem;
+  background: transparent;
+  cursor: pointer;
+  transition: all .25s;
+}
+.filter-btn:hover, .filter-btn.aktif {
+  background: var(--blue); color: #fff; border-color: var(--blue);
+}
+/* HP kecil: 2 tombol per baris */
+@media (max-width: 576px) {
+  .filter-btn { flex: 1 1 42%; font-size: .78rem; min-width: 0; }
+}
+
+/* Section title */
+.judul-section { color: #fff; font-weight: 700; }
+.judul-section span { color: var(--blue-lt); }
+
+/* Footer */
+footer { background: var(--surface); border-top: 1px solid var(--border); color: var(--muted); }
+footer h6 { color: #fff; }
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--blue-lt); }
+</style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar navbar-expand-lg sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="bi bi-lightning-charge-fill"></i> ELECTROMART</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false" aria-label="Buka menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link active" href="#">Beranda</a></li>
+        <li class="nav-item"><a class="nav-link" href="#produk">Produk</a></li>
+        <li class="nav-item"><a class="nav-link" href="#tentang">Tentang</a></li>
+        <li class="nav-item"><a class="nav-link" href="#kontak">Kontak</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container text-center">
+    <h1 class="display-5">ELECTRO<span style="color:var(--blue-lt)">MART</span></h1>
+    <p class="lead">Temukan Teknologi yang Kamu Butuhkan.</p>
+  </div>
+</section>
+
+<!-- ============ KATALOG PRODUK ============ -->
+<section id="produk" class="container py-5">
+
+  <!-- Judul + sorting (berfungsi) -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
+    <h2 class="judul-section mb-0">Katalog <span>Produk</span></h2>
+    <select class="form-select w-auto" id="urutkan" aria-label="Urutkan">
+      <option value="populer" selected>Urutkan: Terpopuler</option>
+      <option value="harga-rendah">Harga Terendah</option>
+      <option value="harga-tinggi">Harga Tertinggi</option>
+      <option value="rating">Rating Tertinggi</option>
+    </select>
+  </div>
+
+  <!-- Filter kategori (berfungsi) -->
+  <div class="filter-bar" role="group" aria-label="Filter kategori">
+    <button class="filter-btn aktif" data-filter="semua">Semua</button>
+    <button class="filter-btn" data-filter="rumah-tangga">Elektronik Rumah Tangga</button>
+    <button class="filter-btn" data-filter="gadget">Gadget &amp; Teknologi</button>
+    <button class="filter-btn" data-filter="gaming">Gaming &amp; Entertainment</button>
+  </div>
+
+  <!-- Grid Produk (1 → 2 → 3 → 4 kolom) -->
+  <div class="row g-4" id="daftarProduk">
+
+    <!-- ================= ELEKTRONIK RUMAH TANGGA ================= -->
+
+    <!-- 1. Kulkas AQUA -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="rumah-tangga" data-harga="2299000" data-rating="4" data-populer="134">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/52909847-d75f-47a1-9a38-6c56e643b13d.png?auth_key=1888711490-9eef7ce0a8804029ba72dac53a9c29ce-0-3477ff46d6693565b813dbde111c7aa1"
+             class="img-promo" alt="Kulkas AQUA AQR-D181">
+        <div class="card-body">
+          <span class="kategori">Rumah Tangga</span>
+          <h5 class="mt-1">Kulkas AQUA AQR-D181</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+            <span class="jumlah">(134)</span>
+          </div>
+          <p class="harga">Rp 2.299.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Rice Cooker Philips -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="rumah-tangga" data-harga="449000" data-rating="4" data-populer="289">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/44783547-2d08-48f9-824a-ca15c9ff4901.png?auth_key=1888711490-52282b317810463a914096085a1593ec-0-7310043f2384c4e9596530058b6e0750"
+             class="img-promo" alt="Rice Cooker Philips HD3119">
+        <div class="card-body">
+          <span class="kategori">Rumah Tangga</span>
+          <h5 class="mt-1">Rice Cooker Philips HD3119</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+            <span class="jumlah">(289)</span>
+          </div>
+          <p class="harga">Rp 449.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Kipas Angin Cosmos -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="rumah-tangga" data-harga="399000" data-rating="3" data-populer="167">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/2a9c3333-29ae-4d25-89f1-cac36551c807.png?auth_key=1888711490-d950bdd0700f4da7997c19b8ddd329ab-0-ae2096978aab618b90c261a6723f7d64"
+             class="img-promo" alt="Kipas Angin Cosmos 16-SDB">
+        <div class="card-body">
+          <span class="kategori">Rumah Tangga</span>
+          <h5 class="mt-1">Kipas Angin Cosmos 16-SDB</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i><i class="bi bi-star"></i>
+            <span class="jumlah">(167)</span>
+          </div>
+          <p class="harga">Rp 399.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. TV Samsung -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="rumah-tangga" data-harga="4299000" data-rating="4" data-populer="198">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/0114aec5-b075-4c8c-a085-c206041a85a5.png?auth_key=1888711490-ff68fbb08e914b36ac68ba29d996900c-0-cc6a09e20779a29c8087bfa5f744ba91"
+             class="img-promo" alt="TV Samsung 43 Crystal UHD">
+        <div class="card-body">
+          <span class="kategori">Rumah Tangga</span>
+          <h5 class="mt-1">TV Samsung 43" Crystal UHD</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+            <span class="jumlah">(198)</span>
+          </div>
+          <p class="harga">Rp 4.299.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Mesin Cuci Samsung -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="rumah-tangga" data-harga="3499000" data-rating="4.5" data-populer="86">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/ae412a90-472d-45ea-b97a-cfbe37700a9c.png?auth_key=1888711490-3f73e2f09b1c48b9a29df754391a6805-0-ddd2a504840d311d955ad7ff54262112"
+             class="img-promo" alt="Mesin Cuci Samsung 8 kg Top Load">
+        <div class="card-body">
+          <span class="kategori">Rumah Tangga</span>
+          <h5 class="mt-1">Mesin Cuci Samsung 8 kg Top Load</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+            <span class="jumlah">(86)</span>
+          </div>
+          <p class="harga">Rp 3.499.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= GADGET & TEKNOLOGI ================= -->
+
+    <!-- 1. Smartphone POCO X7 Pro -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="gadget" data-harga="4999000" data-rating="4" data-populer="312">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/14468072-bf9e-4136-83fa-84bb0c39c4f4.png?auth_key=1888713002-55f43480c48b4a01b4c29653f8965fa7-0-565eec8e8c88fad9d49bb3847908785c"
+             class="img-promo" alt="Smartphone POCO X7 Pro">
+        <div class="card-body">
+          <span class="kategori">Gadget</span>
+          <h5 class="mt-1">Smartphone POCO X7 Pro</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+            <span class="jumlah">(312)</span>
+          </div>
+          <p class="harga">Rp 4.999.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Laptop ASUS Vivobook 14 -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="gadget" data-harga="7499000" data-rating="5" data-populer="241">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/8f314c67-c192-4c53-8d8c-2cbf25b1399e.png?auth_key=1888713002-ee73b79a8e414580bea45c80e74dc4bd-0-a93ee1aa9dc5edb13a28c06d63667e3f"
+             class="img-promo" alt="Laptop ASUS Vivobook 14">
+        <div class="card-body">
+          <span class="kategori">Gadget</span>
+          <h5 class="mt-1">Laptop ASUS Vivobook 14</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            <span class="jumlah">(241)</span>
+          </div>
+          <p class="harga">Rp 7.499.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Tablet Xiaomi Pad 7 -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="gadget" data-harga="4999000" data-rating="3" data-populer="78">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/8f0a621d-926a-4933-86ab-9a65276a30a9.png?auth_key=1888713002-e4b69b70e8304eaeb933a0afa99e0a7f-0-5913fc419dbbc6533feaab767057c8f2"
+             class="img-promo" alt="Tablet Xiaomi Pad 7">
+        <div class="card-body">
+          <span class="kategori">Gadget</span>
+          <h5 class="mt-1">Tablet Xiaomi Pad 7</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i><i class="bi bi-star"></i>
+            <span class="jumlah">(78)</span>
+          </div>
+          <p class="harga">Rp 4.999.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Monitor ASUS VA24EHF -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="gadget" data-harga="1699000" data-rating="4" data-populer="156">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/002e30fd-9a47-4e49-b5a3-d43d6ea7edd2.png?auth_key=1888713002-d58126b925d74758b2cee2f9f8877aeb-0-ebf2344532d183ca16c38ab252187630"
+             class="img-promo" alt="Monitor ASUS VA24EHF">
+        <div class="card-body">
+          <span class="kategori">Gadget</span>
+          <h5 class="mt-1">Monitor ASUS VA24EHF</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+            <span class="jumlah">(156)</span>
+          </div>
+          <p class="harga">Rp 1.699.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Mouse Fantech Helios XD5 -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="gadget" data-harga="699000" data-rating="5" data-populer="267">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/c07d7f20-5653-4ace-a68c-99d5eedd5013.png?auth_key=1888713002-3f475c6debab4d2fb01439fbfcf80e10-0-717789dd0898586b1a28342a8e3f5f9c"
+             class="img-promo" alt="Mouse Fantech Helios XD5">
+        <div class="card-body">
+          <span class="kategori">Gadget</span>
+          <h5 class="mt-1">Mouse Fantech Helios XD5</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            <span class="jumlah">(267)</span>
+          </div>
+          <p class="harga">Rp 699.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= GAMING & ENTERTAINMENT ================= -->
+
+    <!-- Xbox Series X -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="gaming" data-harga="8999000" data-rating="5" data-populer="425">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/885409ce-79ad-449e-a3d6-0a5b070ce198.png?auth_key=1888716223-f47c8130795b429682b51d78f93980e4-0-53807a4b49facff7f24183fe7ab80562"
+             class="img-promo" alt="Xbox Series X">
+        <div class="card-body">
+          <span class="kategori">Gaming</span>
+          <h5 class="mt-1">Xbox Series X</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            <span class="jumlah">(425)</span>
+          </div>
+          <p class="harga">Rp 8.999.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controller Logitech F310 -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="gaming" data-harga="399000" data-rating="4" data-populer="189">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/52fda7fc-038b-44df-966a-9df67586e3a6.png?auth_key=1888716223-0ee6ee3f9fd247adbd1eb6579d02b442-0-e4fd9c8f8770dc2e815972037594d50d"
+             class="img-promo" alt="Controller Logitech F310">
+        <div class="card-body">
+          <span class="kategori">Gaming</span>
+          <h5 class="mt-1">Controller Logitech F310</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+            <span class="jumlah">(189)</span>
+          </div>
+          <p class="harga">Rp 399.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Headset gaming Rexus Vonix F30 -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="gaming" data-harga="399000" data-rating="4" data-populer="124">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/25716b2d-f0cb-45cd-a6c6-3dff84a2641b.png?auth_key=1888716223-fd9412697c294c72a7272b6cbb798180-0-49fbcd1a177bcd79240404d8ce2e64d8"
+             class="img-promo" alt="Headset gaming Rexus Vonix F30">
+        <div class="card-body">
+          <span class="kategori">Gaming</span>
+          <h5 class="mt-1">Headset Gaming Rexus Vonix F30</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+            <span class="jumlah">(124)</span>
+          </div>
+          <p class="harga">Rp 399.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gaming mouse Logitech G304 -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="gaming" data-harga="699000" data-rating="4.5" data-populer="145">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/298abf0c-c7f5-4cf5-8fc2-e057148ca741.png?auth_key=1888716223-5de9151819044807bfb29c880fb5f449-0-979426c3c6f0cd1488b631ea500a67b4"
+             class="img-promo" alt="Gaming mouse Logitech G304">
+        <div class="card-body">
+          <span class="kategori">Gaming</span>
+          <h5 class="mt-1">Gaming Mouse Logitech G304</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+            <span class="jumlah">(145)</span>
+          </div>
+          <p class="harga">Rp 699.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Microphone HyperX SoloCast -->
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-kategori="gaming" data-harga="999000" data-rating="4" data-populer="97">
+      <div class="produk-card">
+        <img src="https://z-cdn-media.chatglm.cn/files/33b079ee-97e5-4056-a420-897ab6d9ecb1.png?auth_key=1888716223-1ea7af959563431eb6c92413edc99e63-0-8463c60fcbad4eeec38505f3b846df31"
+             class="img-promo" alt="Microphone HyperX SoloCast">
+        <div class="card-body">
+          <span class="kategori">Gaming</span>
+          <h5 class="mt-1">Microphone HyperX SoloCast</h5>
+          <div class="rating mb-2">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+            <span class="jumlah">(97)</span>
+          </div>
+          <p class="harga">Rp 999.000</p>
+          <button class="btn-biru w-100"><i class="bi bi-cart-plus"></i> Tambah</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end row -->
+
+</section>
+
+<!-- ============ TENTANG ============ -->
+<section id="tentang" class="container py-5">
+  <div class="row align-items-center g-4">
+    <div class="col-12 col-md-6">
+      <h2 class="judul-section">Tentang <span>ELECTROMART</span></h2>
+      <p style="color: var(--muted);">
+        ELECTROMART adalah katalog elektronik online yang menyediakan peralatan rumah
+        tangga, gadget, dan perlengkapan gaming berkualitas dengan harga terjangkau.
+        Website ini dibangun menggunakan Bootstrap 5 dengan pendekatan Mobile-First,
+        sehingga tampil optimal di semua perangkat.
+      </p>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="row text-center g-3">
+        <div class="col-4">
+          <div class="produk-card p-3">
+            <h3 style="color:var(--blue-lt)" class="mb-0">15+</h3>
+            <small style="color:var(--muted)">Produk</small>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="produk-card p-3">
+            <h3 style="color:var(--blue-lt)" class="mb-0">500+</h3>
+            <small style="color:var(--muted)">Pelanggan</small>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="produk-card p-3">
+            <h3 style="color:var(--blue-lt)" class="mb-0">4.5★</h3>
+            <small style="color:var(--muted)">Rating</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KONTAK ============ -->
+<section id="kontak" class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+      <h2 class="judul-section text-center mb-4">Hubungi <span>Kami</span></h2>
+      <div class="produk-card p-4">
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Nama</label>
+            <input type="text" class="form-control" placeholder="Nama Anda" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" placeholder="email@contoh.com" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Pesan</label>
+            <textarea class="form-control" rows="3" placeholder="Tulis pesan..." required></textarea>
+          </div>
+          <button type="submit" class="btn-biru w-100">Kirim Pesan</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="py-4 mt-5">
+  <div class="container">
+    <div class="row g-3">
+      <div class="col-12 col-md-4">
+        <h6><i class="bi bi-lightning-charge-fill"></i> ELECTROMART</h6>
+        <p class="small">Katalog elektronik responsif dengan Bootstrap 5.</p>
+      </div>
+      <div class="col-6 col-md-2">
+        <h6>Menu</h6>
+        <ul class="list-unstyled small">
+          <li><a href="#">Beranda</a></li>
+          <li><a href="#produk">Produk</a></li>
+          <li><a href="#tentang">Tentang</a></li>
+        </ul>
+      </div>
+      <div class="col-12 col-md-4 text-md-end">
+        <h6>Kontak</h6>
+        <p class="small mb-0">devreynaldi0711@email.com<br>+62 822-4948-9645</p>
+      </div>
+    </div>
+    <hr style="border-color: var(--border);">
+    <p class="text-center small mb-0">&copy; 2026 Dev Reynaldi Simanjuntak — Tugas Rutin 3</p>
+  </div>
+</footer>
+
+<!-- Bootstrap 5 JS 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ====== Filter + Urutkan Produk ====== -->
+<script>
+const tombolFilter = document.querySelectorAll('.filter-btn');
+const daftarProduk = document.getElementById('daftarProduk');
+const produk = Array.from(document.querySelectorAll('#daftarProduk [data-kategori]'));
+
+/* ---------- FILTER KATEGORI ---------- */
+tombolFilter.forEach(btn => {
+  btn.addEventListener('click', () => {
+    // 1. tandai tombol yang aktif
+    tombolFilter.forEach(b => b.classList.remove('aktif'));
+    btn.classList.add('aktif');
+
+    // 2. tampilkan/sembunyikan produk sesuai kategori
+    const filter = btn.dataset.filter;
+    produk.forEach(item => {
+      item.style.display =
+        (filter === 'semua' || item.dataset.kategori === filter) ? '' : 'none';
+    });
+  });
+});
+
+/* ---------- URUTKAN (Terpopuler / Harga / Rating) ---------- */
+const pilihUrut = document.getElementById('urutkan');
+
+pilihUrut.addEventListener('change', () => {
+  const mode = pilihUrut.value;
+
+  produk.sort((a, b) => {
+    const hargaA  = +a.dataset.harga,  hargaB  = +b.dataset.harga;
+    const ratingA = +a.dataset.rating, ratingB = +b.dataset.rating;
+    const popA    = +a.dataset.populer, popB   = +b.dataset.populer;
+
+    if (mode === 'harga-rendah')  return hargaA - hargaB;                       // termurah dulu
+    if (mode === 'harga-tinggi')  return hargaB - hargaA;                       // termahal dulu
+    if (mode === 'rating')        return (ratingB - ratingA) || (popB - popA);  // rating, seri → ulasan
+    return popB - popA;                                                         // default: Terpopuler
+  });
+
+  // susun ulang kartu sesuai hasil sort
+  produk.forEach(item => daftarProduk.appendChild(item));
+});
+</script>
+</body>
+</html>
